@@ -1,0 +1,14 @@
+[debug] [2024-09-20T09:09:10.065Z] ----------------------------------------------------------------------
+[debug] [2024-09-20T09:09:10.072Z] Command:       C:\Program Files\nvm\node.exe C:\Program Files\nvm\node_modules\firebase-tools\lib\bin\firebase.js deploy
+[debug] [2024-09-20T09:09:10.073Z] CLI Version:   13.17.0
+[debug] [2024-09-20T09:09:10.074Z] Platform:      win32
+[debug] [2024-09-20T09:09:10.075Z] Node Version:  v18.19.1
+[debug] [2024-09-20T09:09:10.078Z] Time:          Fri Sep 20 2024 12:09:10 GMT+0300 (Eastern European Summer Time)
+[debug] [2024-09-20T09:09:10.079Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2024-09-20T09:09:10.286Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2024-09-20T09:09:10.287Z] > authorizing via signed-in user (hagarahmed@mheist.com)
+[debug] [2024-09-20T09:09:10.287Z] [iam] checking project auth-module-d898a for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2024-09-20T09:09:10.290Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/auth-module-d898a:testIamPermissions [none]
+[debug] [2024-09-20T09:09:10.291Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/auth-module-d898a:testIamPermissions x-goog-quota-user=projects/auth-module-d898a
+[debug] [2024-09-20T09:09:10.291Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/auth-module-d898a:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
