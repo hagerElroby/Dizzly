@@ -4,7 +4,10 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
-import '../style.css'
+import { signInWithPhoneNumber, PhoneAuthProvider ,signInWithCredential} from 'firebase/auth';
+import { auth } from '../firebase';
+import '../style.css';
+
 const page = () => {
   const router = useRouter();
   const [code, setCode] = useState<string>('');
@@ -12,11 +15,43 @@ const page = () => {
   const [errCodeMSG, setErrCodeMSG] = useState<string>('');
 
   /* submit validate */
-  const submitVal = async (e: React.FormEvent) => {
-    e.preventDefault();
-    // All validation passed, navigate to the home 
-    router.push('/setpassword');
+  // const submitVal = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   // All validation passed, navigate to the home 
+  //   router.push('/setpassword');
 
+  // };
+
+  const verifyCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const verificationId = window.verificationId;
+      const verificationIdStore = localStorage.getItem('verificationId');
+      console.log("verificationId",verificationId)
+      console.log("verificationIdStore",verificationIdStore)
+      if (!verificationId && !verificationIdStore) {
+        setErrCodeMSG('Verification ID not found. Please retry the verification process.');
+        return;
+      }
+
+     const finalVerificationId = verificationId || verificationIdStore;
+      const credential = PhoneAuthProvider.credential(finalVerificationId, code);
+
+      // Sign in the user with the phone credential
+      const result = await signInWithCredential(auth, credential); 
+      console.log('Code verified, user signed in', result);
+
+      // After successful sign-in, navigate to the next page
+      router.push('/setpassword');
+    } catch (error) {
+      console.error('Error verifying code:', error);
+      setErrCodeMSG('Invalid verification code. Please try again.');
+    }
+  };  
+
+const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCode(e.target.value); 
   };
 
   return (
@@ -35,7 +70,7 @@ const page = () => {
           </p>  
           <h1 className='text-3xl font-semibold text-center text-gray-800 mb-3'>Verify code</h1>
           <p className='font-normal text-sm leading-6 text-gray opacity-75 mb-7'>An authentication code has been sent to your email.</p>
-          <form onSubmit={submitVal} className='space-y-4 text-gray-900 w-full rounded font-poppins'>
+          <form onSubmit={verifyCode} className='space-y-4 text-gray-900 w-full rounded font-poppins'>
             <div>
 
                  <div>
@@ -45,6 +80,7 @@ const page = () => {
                   <input
                     type={showpass ? 'text' : 'password'}
                     value={code}
+                    onChange={handleCodeChange}
                     className='w-full h-12 appearance-none border rounded p-3 text-dark leading-6 font-medium text-sm focus:outline-none focus:shadow-outline peer relative'
                   />
                   <i

@@ -1,49 +1,112 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState ,useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
+import { RecaptchaVerifier , PhoneAuthProvider, signInWithPhoneNumber } from 'firebase/auth';
+import {auth} from '../firebase';
 import '../style.css'
+
+
 const page = () => {
   const router = useRouter();
   const [phoneNumber, setPhoneNumber] = useState<string>('');
-  // Error messages
-  const [phoneErrMSG, setphoneErrMSG] = useState<string>('');
-
-
-  const phoneVal = /^[0-9]*$/;
+   const [code, setCode] = useState('');
+  const [verificationId, setVerificationId] = useState('');
+  const [errCodeMSG, setErrCodeMSG] = useState('');
+  const [phoneErrMSG, setPhoneErrMSG] = useState<string>('');
+  
 
 
 
   /* phone number validation */
-  const phoneNumberVal = (value: string, data: number, e: React.ChangeEvent<HTMLInputElement>, formattedValue: string) => {
+  // const phoneNumberVal = (value: string, data: number, e: React.ChangeEvent<HTMLInputElement>, formattedValue: string) => {
+  //   if (e.target.value === '') {
+  //     setphoneErrMSG('Phone number is required');
+  //   }
+  //   // else if (!phoneVal.test(e.target.value) || e.target.value.length > 9) {
+  //   //   setphoneErrMSG('Phone number must be 9 numbers');
+  //   // }
+  //    else {
+  //     setphoneErrMSG('');
+  //     setPhoneNumber(e.target.value);
+  //   }
+  // };
+
+
+   useEffect(() => {
+    if (auth) {
+      window.recaptchaVerifier = new RecaptchaVerifier(auth,
+        'recaptcha-container',
+        {
+          size: 'invisible',
+          callback: (response: any) => {
+            console.log('reCAPTCHA solved, proceed with phone verification');
+          },
+        },
+      );
+    }
+  }, []);
+
+
+  const sendVerificationCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!phoneNumber) {
+      setPhoneErrMSG('Phone number is required');
+      return;
+    }
+
+    try {
+      const appVerifier = window.recaptchaVerifier;
+      const confirmationResult = await signInWithPhoneNumber(
+        auth, // Firebase `auth` object, not a string
+        phoneNumber,
+        appVerifier
+      );
+      setVerificationId(confirmationResult.verificationId);
+      localStorage.setItem('verificationId', confirmationResult.verificationId);
+      console.log('SMS sent', confirmationResult);
+      router.push('/verifycode')
+    } catch (error) {
+      console.error('Error sending verification code:', error);
+      console.log(phoneNumber)
+    }
+
+  };
+
+  //   const handlePhoneNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setPhoneNumber(e.target.value);
+  // };
+
+   const phoneNumberVal = (value: string, data: number, e: React.ChangeEvent<HTMLInputElement>, formattedValue: string) => {
     if (e.target.value === '') {
-      setphoneErrMSG('Phone number is required');
+      setPhoneErrMSG('Phone number is required');
     }
     // else if (!phoneVal.test(e.target.value) || e.target.value.length > 9) {
     //   setphoneErrMSG('Phone number must be 9 numbers');
     // }
      else {
-      setphoneErrMSG('');
+      setPhoneErrMSG('');
       setPhoneNumber(e.target.value);
+      console.log(phoneNumber)
     }
   };
-
-
 
   /* submit validate */
-  const submitVal = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // const submitVal = async (e: React.FormEvent) => {
+  //   e.preventDefault();
 
-    if (!phoneNumber) {
-      setphoneErrMSG('Phone number is required');
-      return;
-    }
-    // All validation passed, navigate to the home 
-    router.push('/verifycode');
+  //   if (!phoneNumber) {
+  //     setphoneErrMSG('Phone number is required');
+  //     return;
+  //   }
+  //   // All validation passed, navigate to the home 
+  //   router.push('/verifycode');
 
-  };
+  // };
+  console.log(phoneNumber)
 
   return (
     <div className='my-3 mx-14 max-h-screen'>
@@ -61,7 +124,7 @@ const page = () => {
           </p>
           <h1 className='text-3xl font-semibold text-center text-gray-800 mb-3'>Forgot your password?</h1>
           <p className='font-normal text-sm leading-6 text-gray opacity-75 mb-7'>Don’t worry, happens to all of us. Enter your email below to recover your password</p>
-          <form onSubmit={submitVal} className='space-y-4 text-gray-900 w-full rounded font-poppins'>
+          <form onSubmit={sendVerificationCode} className='space-y-4 text-gray-900 w-full rounded font-poppins'>
             <div>
               <div>
                 <div className='w-full my-4 relative z-10'>
@@ -84,11 +147,13 @@ const page = () => {
 
 
           </form>
+           <div id="recaptcha-container"></div>
         </div>
         <div className='flex-1 h-full mx-10'>
           <img src="../images/forget.png" alt="" className='block w-full h-full ' />
         </div>
       </div>
+     
     </div>
   );
 }
