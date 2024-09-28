@@ -1,14 +1,11 @@
 .react-tel-input .form-control {
   position: relative;
-    letter-spacing: .01rem;
-    margin-top: 0 !important;
-    margin-bottom: 12px !important;
+    margin-bottom: 2px !important;
     padding-left: 48px;
     padding-top: 16px;
     padding-bottom: 16px;
     margin-left: 0;
     background: #FFFFFF;
-    line-height: 25px;
     height: 40px;
     width: 100%;
     outline: none;
@@ -18,7 +15,7 @@
     color: #1c1b1f;
     line-height: 24px;
     font-weight: 500;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .react-tel-input .flag-dropdown {
@@ -26,7 +23,7 @@
     top: 0;
     bottom: 0;
     padding: 0;
-    background-color: transparent;
+    background-color: transparent !important;
     border: none !important;
     border-radius: 3px 0 0 3px;
      height: 40px;
@@ -34,7 +31,6 @@
 
 .react-tel-input .country-list {
     outline: none;
-    z-index: 15 !important;
     list-style: none;
     position: absolute;
     padding: 10px;
@@ -52,10 +48,17 @@
     width: 43px;
     height: 100%;
     padding: 8px;
-    background-color: transparent;
+    background-color: transparent !important;
 }
-.react-tel-input .selected-flag:hover {
-      border-left: 1px solid #79747E;
-      border-top: 1px solid #79747E;
-      border-bottom: 1px solid #79747E;
+
+
+@media screen and (max-width:768px) {
+    .react-tel-input .form-control{
+    font-size: 12px;
+    margin-top: 10px !important;
+    height: 32px;
+    }
+    .react-tel-input .flag{
+        margin-top: 3px !important;
+    }
 }

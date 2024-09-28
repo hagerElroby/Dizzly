@@ -1,7 +1,7 @@
-"use client"
-import { useRouter } from 'next/navigation';
+'use client'
+import { useRouter } from 'next/navigation'
 export default function Home() {
- const router = useRouter();
+  const router = useRouter()
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
@@ -21,5 +21,5 @@ export default function Home() {
         </button>
       </div>
     </div>
-  );
+  )
 }
